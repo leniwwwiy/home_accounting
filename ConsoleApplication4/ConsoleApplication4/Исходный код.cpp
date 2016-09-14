@@ -10,28 +10,28 @@
 
 using namespace std;
 
-set<bd> data;// набор учёток. хранится в виде бинарного дерева поиска чтобы искать и получать доступ, удалять и изменять за быстрое время o(log(n))
-const char nof[] = "bd.txt"; // NameOfFile nof имя файла для БД
+set<bd> data;
+const char nof[] = "bd.txt"; // NameOfFile nof
 
-void printall(ostream &out, bool console){// вывод всех учёток в указанный выходной поток
-	for (const auto &it: data){// ну и выводим всё по порядку в лексикографическом порядке
+void printall(ostream &out, bool console){// printing data in out stream
+	for (const auto &it: data){
 		if (it.name == "unknown")
 			continue;
 		if (console)
-			cout << "Учетная запись: ";
+			cout << "Accaunt login: ";
 		out << it.name << "\t";
 		if (console)
-			cout << "Доход: ";
+			cout << "Income: ";
 		out << it.in << "\t";
 		if (console){
 			if (it.out.size() > 0)
-				cout << "Расходы: ";
+				cout << "Purchases: ";
 			else
-				cout << "Расходов пока нет.";
+				cout << "Without spending.";
 			for (int j = 0; j<it.out.size(); ++j)
 				out << it.out[j] << ' ';
 			out << endl;
-			cout << "--------Остаток: ";
+			cout << "--------Balance: ";
 			out << it.cost << "\n";
 		}
 		else{
@@ -48,106 +48,106 @@ void printall(ostream &out, bool console){// вывод всех учёток в указанный выход
 int main(){
 	setlocale(LC_ALL, "Russian");
 	int com;
-	cout << "Вас приветствует программа домашней бухгалтерии Sweet Home Pro.";
+	cout << "Welcome to home accounting program Sweet Home Pro.";
 	data = load(nof);
-	cout << "Загружено " << (data).size() << " учётных записей.\n";
+	cout << (data).size() << " accounts loaded.\n";
 	while (cin){
-		cout << "Доступные команды:\n";
-		cout << "1 - Создать новую учетную запись.\n";
-		cout << "2 - Добавить расход к учетной записи.\n";
-		cout << "3 - Редактировать учетную запись.\n";
-		cout << "4 - Вывести информацию о учетной записи.\n";
-		cout << "5 - Вывести имена всех существующих учетных записей.\n";
-		cout << "6 - Вывести полную детализацию всех учётных записей на экран.\n";
-		cout << "0 - Выход из программы.\n";
+		cout << "Available commands:\n";
+		cout << "1 - Create new account.\n";
+		cout << "2 - Add new purchase.\n";
+		cout << "3 - Edit account.\n";
+		cout << "4 - Show account info.\n";
+		cout << "5 - Show accouts list.\n";
+		cout << "6 - Print full details of all accounts on the screen.\n";
+		cout << "0 - Exit.\n";
 		com = -11235813;
 		cin >> com;
 		if (com == -11235813){			
-			cout << "Некорректный ввод. Программа будет завершена.\n";
+			cout << "Uncorrect input. It completed the program.\n";
 			break;
 		}
 		system("cls");
 
 		if (com == 1){
-			cout << "Введите данные в формате: Имя Доход\n";
+			cout << "Input data in format: Name Income\n";
 			bd a;
 			a.sc();
 			if ((data).find(a) == (data).end()){
 				(data).insert(a);
-				cout << "Учетная запись " << a.name << " создана.\n";
+				cout << "Account " << a.name << " created.\n";
 			}
 			else
-				cout << "Учетная запись с таким именем уже существует.\n";
+				cout << "The account with the same name already exists.\n";
 		}
 		if (com == 2){
-			cout << "Введите имя учетной записи и расход.\n";
+			cout << "Enter your account name and consumption.\n";
 			string name;
 			int out;
 			cin >> name >> out;
-			bd a(name, 0, 0);// создаём элемент с именем какое нам надо
-			set<bd>::iterator it = (data).find(a);// итератор ищет элемент а
+			bd a(name, 0, 0);
+			set<bd>::iterator it = (data).find(a);
 			if (it == (data).end())
-				cout << "Такой учетной записи не существует.\n";
+				cout << "This account does not exist.\n";
 			else{
-				a = *it;// переприсваиваем чтобы в а был не пустой элемент только с именем, а то что мы нашли с таким именем
-				if (a.cost<out){// если на учётке денег меньше чем ты хочешь потратить
-					cout << "Расход привышает остаток счета.\n";
+				a = *it;
+				if (a.cost<out){
+					cout << "Consumption exceeds the account balance.\n";
 				}
 				else{
-					a.add(out);// изменяем а
-					(data).erase(a);// удаляем то что было
-					(data).insert(a);// обратно запихиваем новый измененный элемент
-					cout << "Успешно.\n";// так надо. иначе не работает и так будет везде
+					a.add(out);
+					(data).erase(a);
+					(data).insert(a);
+					cout << "Done.\n";
 				}
 			}
 		}
 		if (com == 3){
-			cout << "Введите имя учетной записи.\n";
+			cout << "Input account name:\n";
 			string name;
 			int out;
 			cin >> name;
-			bd a(name, 0, 0);// тоже самое
+			bd a(name, 0, 0);
 			set<bd>::iterator it = (data).find(a);
 			if (it == (data).end())
-				cout << "Такой учетной записи не существует.\n";
+				cout << "This account does not exist.\n";
 			else{
 				a = *it;
 				int c;
-				cout << "1 - Для изменения имени учетной записи\n";
-				cout << "2 - Для изменения дохода.\n";
+				cout << "1 - For edit account name\n";
+				cout << "2 - For edit account income.\n";
 				cin >> c;
 				if (c>2 || c<1)
-					cout << "Ошибка ввода.\n";
+					cout << "Input is incorrect.\n";
 				else
 					if (c == 1){
-						cout << "Введите новое имя: ";
+						cout << "Input new name: ";
 						string nn;
 						cin >> nn;
 						data.erase(it);
 						a.name = nn;
 						(data).insert(a);
-						cout << "Успешно.\n";
+						cout << "done.\n";
 					}
 					else{
-						cout << "Введите новый доход: ";
+						cout << "Enter new income: ";
 						int nd;
 						cin >> nd;
 						a.editin(nd);
 						(data).erase(a);
 						(data).insert(a);
-						cout << "Успешно.\n";
+						cout << "done.\n";
 					}
 			}
 		}
 		if (com == 4){
-			cout << "Введите имя учетной записи:\n";
+			cout << "Enter account name:\n";
 			string s;
 			cin >> s;
 			bd a;
 			a.name = s;
 			set<bd>::iterator it = (data).find(a);
 			if (it == (data).end())
-				cout << "Учетная запись с таким именем не найдена.\n";
+				cout << "This account does not exist.\n";
 			else{
 				a = *it;
 				a.pr();
@@ -166,5 +166,5 @@ int main(){
 		cout << endl << endl;
 		
 	}
-	printall(ofstream(nof), 0);// напечатать в поток
+	printall(ofstream(nof), 0);// download data base in file
 }
